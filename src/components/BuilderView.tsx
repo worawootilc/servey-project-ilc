@@ -1,14 +1,21 @@
 import { useState } from 'react';
-import { Check, Plus, RotateCcw, Save, Trash2, Users } from 'lucide-react';
+import { Check, KeyRound, Lock, Plus, RotateCcw, Save, ShieldCheck, Trash2, Users } from 'lucide-react';
+import { updateAdminPasscode } from '../services/adminAuth.ts';
 import type { QuestionType, RosterMember, SurveyQuestion, SurveySchema } from '../types/survey.ts';
 
 interface BuilderViewProps {
   survey: SurveySchema;
   onSaveSurvey: (updated: SurveySchema) => Promise<void>;
   onResetSurvey: () => Promise<void>;
+  onLockAdmin: () => void;
 }
 
-export function BuilderView({ survey, onSaveSurvey, onResetSurvey }: BuilderViewProps) {
+export function BuilderView({
+  survey,
+  onSaveSurvey,
+  onResetSurvey,
+  onLockAdmin,
+}: BuilderViewProps) {
   const [draft, setDraft] = useState<SurveySchema>(() => structuredClone(survey));
   const [saving, setSaving] = useState(false);
   const [savedNotice, setSavedNotice] = useState(false);
@@ -19,6 +26,8 @@ export function BuilderView({ survey, onSaveSurvey, onResetSurvey }: BuilderView
   const [newQuestionTitle, setNewQuestionTitle] = useState('');
   const [newQuestionType, setNewQuestionType] = useState<QuestionType>('single-choice');
   const [newQuestionOptions, setNewQuestionOptions] = useState('ตัวเลือกที่ 1, ตัวเลือกที่ 2');
+  const [newPasscode, setNewPasscode] = useState('');
+  const [passcodeMessage, setPasscodeMessage] = useState<string | null>(null);
 
   async function handleSave() {
     setSaving(true);
@@ -122,7 +131,15 @@ export function BuilderView({ survey, onSaveSurvey, onResetSurvey }: BuilderView
           </p>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={onLockAdmin}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-[#57605B] bg-white border border-[#DCE2DD] rounded-lg hover:text-[#161B18] transition-colors whitespace-nowrap"
+          >
+            <Lock className="w-3.5 h-3.5" />
+            <span>ล็อกออกจาก Admin</span>
+          </button>
           <button
             type="button"
             disabled={saving}
@@ -150,6 +167,17 @@ export function BuilderView({ survey, onSaveSurvey, onResetSurvey }: BuilderView
               </>
             )}
           </button>
+        </div>
+      </div>
+
+      {/* Admin Notice */}
+      <div className="flex items-start gap-3 p-4 rounded-xl bg-[#EDF3EF] border border-[#C7D8CD] text-xs text-[#164A32]">
+        <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5" />
+        <div className="space-y-0.5 leading-relaxed">
+          <div className="font-semibold">หน้านี้แสดงเฉพาะผู้ดูแลระบบ (Admin) ที่ยืนยันรหัสผ่านแล้วเท่านั้น</div>
+          <div className="text-[#2D5942]">
+            ผู้ตอบแบบสำรวจทั่วไปจะเห็นเฉพาะแท็บ แบบสำรวจ, เมนู ≤ 150฿ และ สรุปผล โดยไม่สามารถแก้ไขคำถามหรือลบคำตอบได้
+          </div>
         </div>
       </div>
 
@@ -351,6 +379,46 @@ export function BuilderView({ survey, onSaveSurvey, onResetSurvey }: BuilderView
             <span>เพิ่มคำถามลงในแบบสำรวจ</span>
           </button>
         </div>
+      </section>
+
+      {/* Admin Passcode Settings */}
+      <section className="bg-white border border-[#E2E6E3] rounded-2xl p-6 space-y-4">
+        <div className="flex items-center gap-2">
+          <KeyRound className="w-4 h-4 text-[#1B5E3F]" />
+          <h3 className="text-base font-semibold text-[#161B18]">เปลี่ยนรหัสผ่านผู้ดูแลระบบ (Admin Passcode)</h3>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-2 max-w-md">
+          <input
+            type="password"
+            value={newPasscode}
+            onChange={(e) => {
+              setNewPasscode(e.target.value);
+              setPasscodeMessage(null);
+            }}
+            placeholder="ระบุรหัสผ่านใหม่ (อย่างน้อย 4 ตัวอักษร)"
+            className="flex-1 px-3.5 py-2 text-sm bg-[#F7F8F7] border border-[#DCE2DD] rounded-lg focus:outline-none focus:border-[#1B5E3F]"
+          />
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                await updateAdminPasscode(newPasscode);
+                setNewPasscode('');
+                setPasscodeMessage('อัปเดตรหัสผ่าน Admin บนเครื่องนี้แล้ว');
+              } catch (err) {
+                setPasscodeMessage(
+                  err instanceof Error ? err.message : 'ไม่สามารถอัปเดตรหัสผ่านได้'
+                );
+              }
+            }}
+            className="px-4 py-2 text-xs font-medium text-white bg-[#1B5E3F] rounded-lg hover:bg-[#144730] whitespace-nowrap"
+          >
+            บันทึกรหัสผ่านใหม่
+          </button>
+        </div>
+        {passcodeMessage && (
+          <p className="text-xs text-[#1B5E3F] font-medium">{passcodeMessage}</p>
+        )}
       </section>
     </div>
   );

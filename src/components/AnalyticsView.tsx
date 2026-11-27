@@ -6,6 +6,7 @@ import { ResponsesTableView } from './ResponsesTableView.tsx';
 interface AnalyticsViewProps {
   survey: SurveySchema;
   responses: SurveyResponseRecord[];
+  isAdmin: boolean;
   onStartSurvey: () => void;
   onEditMemberSelection: (memberId: string) => void;
   onSeedSample: () => Promise<void>;
@@ -20,6 +21,7 @@ function isComboSelection(val: unknown): val is MenuComboSelection {
 export function AnalyticsView({
   survey,
   responses,
+  isAdmin,
   onStartSurvey,
   onEditMemberSelection,
   onSeedSample,
@@ -181,7 +183,7 @@ export function AnalyticsView({
             </h2>
             <p className="text-sm text-[#57605B]">
               เมื่อคณาจารย์และวิทยากรทั้ง {survey.roster.length} ท่านเลือกเมนูอาหารและเครื่องดื่มไม่เกิน{' '}
-              {survey.budgetLimitBaht} บาทแล้ว ระบบจะรวบรวมยอดสั่งซื้อและสร้างข้อความส่ง LINE OA @coffeesmitr ให้อัตโนมัติ
+              {survey.budgetLimitBaht} บาทแล้ว หน้านี้จะสรุปว่าใครรับประทานอะไร และรวมรายการสำหรับนำไปส่งร้าน COFFEE SMITR (LINE OA @coffeesmitr) ด้วยตนเอง (ไม่มีการส่ง LINE อัตโนมัติ)
             </p>
           </div>
 
@@ -194,15 +196,17 @@ export function AnalyticsView({
               <Plus className="w-4 h-4" />
               <span>เริ่มเลือกเมนูในแบบสำรวจ</span>
             </button>
-            <button
-              type="button"
-              disabled={seeding}
-              onClick={handleSeedClick}
-              className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-[#161B18] bg-white border border-[#DCE2DD] rounded-lg hover:border-[#BFC7C1] transition-colors"
-            >
-              <Sparkles className="w-4 h-4 text-[#1B5E3F]" />
-              <span>{seeding ? 'กำลังสร้างตัวอย่าง...' : 'โหลดข้อมูลตัวอย่าง (5 ท่าน)'}</span>
-            </button>
+            {isAdmin && (
+              <button
+                type="button"
+                disabled={seeding}
+                onClick={handleSeedClick}
+                className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-[#161B18] bg-white border border-[#DCE2DD] rounded-lg hover:border-[#BFC7C1] transition-colors"
+              >
+                <Sparkles className="w-4 h-4 text-[#1B5E3F]" />
+                <span>{seeding ? 'กำลังสร้างตัวอย่าง...' : 'โหลดข้อมูลตัวอย่าง (5 ท่าน)'}</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -287,12 +291,12 @@ export function AnalyticsView({
             {copiedLineOrder ? (
               <>
                 <ClipboardCheck className="w-4 h-4" />
-                <span>คัดลอกข้อความสั่งทาง LINE OA แล้ว</span>
+                <span>คัดลอกรายการแล้ว</span>
               </>
             ) : (
               <>
                 <Copy className="w-4 h-4" />
-                <span>คัดลอกยอดสั่งส่ง LINE OA (@coffeesmitr)</span>
+                <span>คัดลอกรายการส่ง LINE (@coffeesmitr)</span>
               </>
             )}
           </button>
@@ -303,6 +307,7 @@ export function AnalyticsView({
         <ResponsesTableView
           survey={survey}
           responses={responses}
+          isAdmin={isAdmin}
           onDeleteResponse={onDeleteResponse}
           onClearAll={onClearAll}
         />
@@ -356,10 +361,10 @@ export function AnalyticsView({
         <div className="px-6 py-4 border-b border-[#E2E6E3] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h3 className="text-base font-semibold text-[#161B18]">
-              สถานะการเลือกเมนูรายบุคคล (ครบ {survey.roster.length} ท่าน)
+              สรุปว่าใครรับประทานอะไร (รายบุคคล {survey.roster.length} ท่าน)
             </h3>
             <p className="text-xs text-[#57605B]">
-              ติดตามว่าท่านใดเลือกเมนูแล้ว หรือยังรอเลือกเมนู (สามารถกดเลือก/แก้ไขแทนได้ทันที)
+              แสดงเมนูอาหาร เครื่องดื่ม ระดับความหวาน และยอดรวมของแต่ละท่าน
             </p>
           </div>
           <div className="text-xs font-mono tabular-nums text-[#57605B]">
@@ -556,6 +561,39 @@ export function AnalyticsView({
           )}
         </div>
       </div>
+      {/* Manual LINE OA @coffeesmitr Order Summary Box */}
+      <section className="bg-white border border-[#E2E6E3] rounded-2xl p-6 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#EEF1EE] pb-4">
+          <div>
+            <h3 className="text-base font-semibold text-[#161B18]">
+              สรุปรายการสำหรับส่งให้ร้าน COFFEE SMITR (LINE OA @coffeesmitr)
+            </h3>
+            <p className="text-xs text-[#57605B] mt-0.5">
+              ระบบไม่ได้ส่ง LINE ให้อัตโนมัติ ท่านสามารถตรวจสอบและคัดลอกข้อความด้านล่างไปส่งที่ LINE OA @coffeesmitr ได้ด้วยตนเอง
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleCopyLineOrder}
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-white bg-[#1B5E3F] rounded-lg hover:bg-[#144730] transition-colors whitespace-nowrap shrink-0 self-start sm:self-auto"
+          >
+            {copiedLineOrder ? (
+              <>
+                <ClipboardCheck className="w-3.5 h-3.5" />
+                <span>คัดลอกข้อความแล้ว</span>
+              </>
+            ) : (
+              <>
+                <Copy className="w-3.5 h-3.5" />
+                <span>คัดลอกข้อความนี้</span>
+              </>
+            )}
+          </button>
+        </div>
+        <pre className="p-4 bg-[#F7F8F7] border border-[#E2E6E3] rounded-xl text-xs sm:text-sm text-[#161B18] font-sans whitespace-pre-wrap leading-relaxed">
+          {buildLineOrderText()}
+        </pre>
+      </section>
         </>
       )}
     </div>

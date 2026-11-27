@@ -72,20 +72,20 @@ export const DEFAULT_SURVEY: SurveySchema = {
       options: [
         {
           id: 'opt-panini',
-          label: 'Panini & Bun (60–75 บาท)',
-          description: 'พานีนีหนีบร้อนและบันอบสดใหม่ เหลืองบสำหรับเครื่องดื่มสูงสุด 90 บาท',
+          label: 'Panini & Bun หนีบร้อน (60–75 บาท)',
+          description: 'พานีนีปิ้งลายหนีบร้อนและบันอบใหม่ เหลืองบเครื่องดื่มสูงสุด 90 บาท',
           imageUrl: categorySavoryImg,
         },
         {
           id: 'opt-beverage',
-          label: 'เน้นเครื่องดื่มคราฟต์ (50–90 บาท)',
-          description: 'กาแฟสเปเชียลตี้ มัทฉะอูจิ หรือโซดาผลไม้ คู่ขนมหรือบันเบาๆ',
+          label: 'ชุดเครื่องดื่มร้อน–เย็น & อาหาร (50–90 บาท)',
+          description: 'กาแฟลาเต้อาร์ต มัทฉะอูจิ หรือโซดาผลไม้ จับคู่พานีนีหรือบันในงบ 150 บาท',
           imageUrl: categoryBeverageImg,
         },
         {
-          id: 'opt-wrap-cake',
-          label: 'Wrap & Cake (60–88 บาท)',
-          description: 'แร็ปตอติญ่าอิ่มท้อง หรือบราวนี่และเค้กโฮมเมดคู่กาแฟ/ชา',
+          id: 'opt-wrap',
+          label: 'Wrap ตอติญ่าย่าง (78–88 บาท)',
+          description: 'แร็ปตอติญ่าย่างไส้แน่นอิ่มท้อง คู่กาแฟเย็นหรือชาไทยภายในงบ 150 บาท',
           imageUrl: categoryBakeryImg,
         },
       ],
@@ -314,7 +314,7 @@ export function createSampleResponses(): SurveyResponseRecord[] {
       respondentId: 'member-01',
       respondentName: 'รองศาสตราจารย์ ดร.ชนัตถ์ พูนเดช',
       answers: {
-        q1_category: 'Panini & Bun (60–75 บาท)',
+        q1_category: 'Panini & Bun หนีบร้อน (60–75 บาท)',
         q2_menu_combo: {
           foodId: 'food-truffle-ham-cheese-panini',
           foodName: 'TRUFFLE HAM CHEESE PANINI (พานีนี ทรัฟเฟิล แฮมชีส)',
@@ -337,7 +337,7 @@ export function createSampleResponses(): SurveyResponseRecord[] {
       respondentId: 'member-02',
       respondentName: 'ผู้ช่วยศาสตราจารย์ ดร.จิตสุภา กิติผดุง',
       answers: {
-        q1_category: 'เน้นเครื่องดื่มคราฟต์ (50–90 บาท)',
+        q1_category: 'ชุดเครื่องดื่มร้อน–เย็น & อาหาร (50–90 บาท)',
         q2_menu_combo: {
           foodId: 'food-spinach-cheesy-bun',
           foodName: 'SPINACH CHEESY BUN (บันผักโขมอบชีส)',
@@ -360,7 +360,7 @@ export function createSampleResponses(): SurveyResponseRecord[] {
       respondentId: 'member-06',
       respondentName: 'นางสาวประพาฬรัตน์ ยงมานิตชัย',
       answers: {
-        q1_category: 'Wrap & Cake (60–88 บาท)',
+        q1_category: 'Wrap ตอติญ่าย่าง (78–88 บาท)',
         q2_menu_combo: {
           foodId: 'food-caesar-chicken-wrap',
           foodName: 'CAESAR CHICKEN WRAP (แร็ปซีซาร์สลัดไก่)',
@@ -383,7 +383,7 @@ export function createSampleResponses(): SurveyResponseRecord[] {
       respondentId: 'member-11',
       respondentName: 'อาจารย์พรหมมินทร์ ประไพพงษ์ (วิทยากร)',
       answers: {
-        q1_category: 'Panini & Bun (60–75 บาท)',
+        q1_category: 'Panini & Bun หนีบร้อน (60–75 บาท)',
         q2_menu_combo: {
           foodId: 'food-salmon-creamcheese-panini',
           foodName: 'SALMON CREAMCHEESE PANINI (พานีนี แซลมอน ครีมชีส)',
@@ -406,18 +406,18 @@ export function createSampleResponses(): SurveyResponseRecord[] {
       respondentId: 'member-12',
       respondentName: 'อาจารย์ ดร.พรรณธร ครุธเนตร (วิทยากร)',
       answers: {
-        q1_category: 'Wrap & Cake (60–88 บาท)',
+        q1_category: 'Wrap ตอติญ่าย่าง (78–88 บาท)',
         q2_menu_combo: {
-          foodId: 'food-nanas-no-worries',
-          foodName: 'NANA’S “NO-WORRIES” (บาร์โอ๊ตกล้วย นาน่า)',
-          foodPrice: 65,
+          foodId: 'food-banana-almond-butter-wrap',
+          foodName: 'BANANA & ALMOND BUTTER (แร็ปกล้วยเนยอัลมอนด์)',
+          foodPrice: 78,
           drinkId: 'drink-oat-milk-latte',
           drinkName: 'Oat Milk Latte (โอ๊ตมิลค์ ลาเต้)',
           drinkTemp: 'ICE',
           drinkBasePrice: 70,
           drinkAddons: [],
           drinkAddonsPrice: 0,
-          totalPrice: 135,
+          totalPrice: 148,
         },
         q3_sweetness: 'หวานน้อย (25%)',
         q5_dietary: ['แพ้นมวัว / ต้องการนมโอ๊ต'],

@@ -6,6 +6,7 @@ import type { AnswerValue, MenuComboSelection, SurveyResponseRecord, SurveySchem
 interface ResponsesTableViewProps {
   survey: SurveySchema;
   responses: SurveyResponseRecord[];
+  isAdmin: boolean;
   onDeleteResponse: (id: string) => Promise<void>;
   onClearAll: () => Promise<void>;
 }
@@ -25,6 +26,7 @@ function formatAnswerDisplay(val: AnswerValue | undefined): string {
 export function ResponsesTableView({
   survey,
   responses,
+  isAdmin,
   onDeleteResponse,
   onClearAll,
 }: ResponsesTableViewProps) {
@@ -68,7 +70,7 @@ export function ResponsesTableView({
           </p>
         </div>
 
-        {responses.length > 0 && (
+        {isAdmin && responses.length > 0 && (
           <div className="flex items-center gap-2 shrink-0">
             {confirmClearAll ? (
               <div className="inline-flex items-center gap-2 bg-red-50 border border-red-200 px-3 py-1.5 rounded-lg text-xs">
@@ -189,15 +191,17 @@ export function ResponsesTableView({
                           >
                             <Eye className="w-4 h-4" />
                           </button>
-                          <button
-                            type="button"
-                            disabled={deletingId === r.id}
-                            onClick={() => handleDelete(r.id)}
-                            className="p-1.5 text-[#57605B] hover:text-red-700 rounded disabled:opacity-40"
-                            title="ลบรายการ"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          {isAdmin && (
+                            <button
+                              type="button"
+                              disabled={deletingId === r.id}
+                              onClick={() => handleDelete(r.id)}
+                              className="p-1.5 text-[#57605B] hover:text-red-700 rounded disabled:opacity-40"
+                              title="ลบรายการ"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

@@ -7,7 +7,7 @@ import type {
   SurveySchema,
 } from '../types/survey.ts';
 
-const SCHEMA_STORAGE_KEY = 'coffeesmitr_survey_schema_v1';
+const SCHEMA_STORAGE_KEY = 'coffeesmitr_survey_schema_v3';
 const RESPONSES_STORAGE_KEY = 'coffeesmitr_survey_responses_v1';
 
 function isMenuComboSelection(val: unknown): val is MenuComboSelection {

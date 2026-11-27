@@ -62,9 +62,9 @@ const QUICK_PRESETS: QuickComboPreset[] = [
     temp: 'ICE',
   },
   {
-    label: 'เซตปราศจากนม 135฿',
-    subtitle: 'บาร์โอ๊ตกล้วยนาน่า + โอ๊ตมิลค์ลาเต้',
-    foodId: 'food-nanas-no-worries',
+    label: 'เซตสุขภาพไม่ผสมนมวัว 148฿',
+    subtitle: 'แร็ปกล้วยเนยอัลมอนด์ + โอ๊ตมิลค์ลาเต้',
+    foodId: 'food-banana-almond-butter-wrap',
     drinkId: 'drink-oat-milk-latte',
     temp: 'ICE',
   },
@@ -341,7 +341,7 @@ export function MenuComboPicker({ budgetLimit, value, onChange }: MenuComboPicke
             <div>
               <h4 className="text-base font-semibold text-[#161B18]">1. เลือกเมนูอาหาร (60–88 บาท)</h4>
               <p className="text-xs text-[#57605B]">
-                {value.drinkId ? `งบอาหารคงเหลือ ${Math.max(0, remainingForFood)} บาท` : 'Panini & Bun · Wrap · Cake'}
+                {value.drinkId ? `งบอาหารคงเหลือ ${Math.max(0, remainingForFood)} บาท` : 'Panini & Bun · Wrap'}
               </p>
             </div>
             {value.foodId && (
@@ -366,7 +366,7 @@ export function MenuComboPicker({ budgetLimit, value, onChange }: MenuComboPicke
           {/* Food Filter Controls */}
           <div className="space-y-2.5">
             <div className="flex flex-wrap gap-1 p-1 bg-[#F2F4F2] rounded-lg">
-              {(['ALL', 'Panini & Bun', 'Wrap', 'Cake'] as const).map((cat) => (
+              {(['ALL', 'Panini & Bun', 'Wrap'] as const).map((cat) => (
                 <button
                   key={cat}
                   type="button"
@@ -377,7 +377,7 @@ export function MenuComboPicker({ budgetLimit, value, onChange }: MenuComboPicke
                       : 'text-[#57605B] hover:text-[#161B18]'
                   }`}
                 >
-                  {cat === 'ALL' ? 'ทั้งหมด (24)' : cat}
+                  {cat === 'ALL' ? 'ทั้งหมด (18)' : cat}
                 </button>
               ))}
             </div>
@@ -387,14 +387,14 @@ export function MenuComboPicker({ budgetLimit, value, onChange }: MenuComboPicke
                 type="text"
                 value={foodQuery}
                 onChange={(e) => setFoodQuery(e.target.value)}
-                placeholder="ค้นหาชื่อเมนูอาหาร เช่น แฮมชีส, แซลมอน, แร็ป, บราวนี่..."
+                placeholder="ค้นหาชื่อเมนูอาหาร เช่น แฮมชีส, แซลมอน, ทูน่า, แร็ป..."
                 className="w-full pl-9 pr-3 py-2 text-sm bg-[#F7F8F7] border border-[#E2E6E3] rounded-lg focus:outline-none focus:border-[#1B5E3F]"
               />
             </div>
           </div>
 
           {/* Food List */}
-          <div className="max-h-[420px] overflow-y-auto pr-1 space-y-2">
+          <div className="max-h-[480px] overflow-y-auto pr-1 pb-3 space-y-2">
             {filteredFoods.length === 0 ? (
               <div className="py-10 text-center text-sm text-[#57605B]">
                 ไม่พบเมนูอาหารที่อยู่ในงบคงเหลือ {Math.max(0, remainingForFood)} บาท
@@ -515,7 +515,7 @@ export function MenuComboPicker({ budgetLimit, value, onChange }: MenuComboPicke
           </div>
 
           {/* Drink List */}
-          <div className="max-h-[420px] overflow-y-auto pr-1 space-y-2">
+          <div className="max-h-[480px] overflow-y-auto pr-1 pb-3 space-y-2">
             {filteredDrinks.length === 0 ? (
               <div className="py-10 text-center text-sm text-[#57605B]">
                 ไม่พบเครื่องดื่มที่อยู่ในงบคงเหลือ {Math.max(0, remainingForDrink)} บาท
@@ -616,6 +616,32 @@ export function MenuComboPicker({ budgetLimit, value, onChange }: MenuComboPicke
           </div>
         </div>
       </div>
+
+      {/* Non-overlapping Inline Bottom Summary Strip */}
+      {(value.foodId || value.drinkId) && (
+        <div
+          className={`rounded-xl border px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs ${
+            isOverBudget
+              ? 'bg-red-50/70 border-red-300 text-red-800'
+              : 'bg-[#F7F8F7] border-[#DCE2DD] text-[#161B18]'
+          }`}
+        >
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span className="text-[#57605B]">รายการที่เลือก:</span>
+            <strong className="font-semibold">{value.foodName || 'ไม่รับอาหาร'}</strong>
+            <span className="text-[#9CA39E]">+</span>
+            <strong className="font-semibold">
+              {value.drinkName ? `${value.drinkName} (${value.drinkTemp})` : 'ไม่รับเครื่องดื่ม'}
+            </strong>
+          </div>
+          <div className="font-mono tabular-nums font-semibold shrink-0">
+            รวม {totalPrice} / {budgetLimit} บาท{' '}
+            <span className={isOverBudget ? 'text-red-700' : 'text-[#1B5E3F]'}>
+              {isOverBudget ? `(เกิน ${Math.abs(remaining)}฿)` : `(คงเหลือ ${remaining}฿)`}
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

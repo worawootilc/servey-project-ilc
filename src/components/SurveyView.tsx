@@ -309,7 +309,7 @@ export function SurveyView({
                     : 'border-[#E2E6E3] bg-white hover:border-[#B8C2BB]'
                 }`}
               >
-                <div className="aspect-[4/3] w-full overflow-hidden bg-[#EEF1EE]">
+                <div className="aspect-square w-full overflow-hidden bg-[#F7F8F7]">
                   <ResilientImage
                     src={opt.imageUrl}
                     alt={opt.label}
@@ -317,16 +317,20 @@ export function SurveyView({
                     className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-200"
                   />
                 </div>
-                <div className="p-4 flex-1 flex flex-col justify-between gap-2">
+                <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-2">
                   <div>
                     <div className="flex items-start justify-between gap-2">
-                      <span className="text-sm font-semibold text-[#161B18]">{opt.label}</span>
+                      <span className="text-base font-semibold text-[#161B18] leading-snug">
+                        {opt.label}
+                      </span>
                       {isSelected && (
-                        <Check className="w-4 h-4 text-[#1B5E3F] shrink-0 mt-0.5" strokeWidth={2.5} />
+                        <Check className="w-4 h-4 text-[#1B5E3F] shrink-0 mt-1" strokeWidth={2.5} />
                       )}
                     </div>
                     {opt.description && (
-                      <p className="text-xs text-[#57605B] mt-1 leading-relaxed">{opt.description}</p>
+                      <p className="text-xs sm:text-sm text-[#57605B] mt-1.5 leading-relaxed">
+                        {opt.description}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -579,9 +583,9 @@ export function SurveyView({
   return (
     <div className="space-y-8">
       {/* Editorial Hero Split */}
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch bg-white border border-[#E2E6E3] rounded-2xl overflow-hidden">
-        <div className="lg:col-span-7 p-6 sm:p-8 lg:p-10 flex flex-col justify-between gap-6">
-          <div className="space-y-4">
+      <section className="grid grid-cols-1 lg:grid-cols-12 gap-0 items-stretch bg-white border border-[#E2E6E3] rounded-2xl overflow-hidden">
+        <div className="lg:col-span-8 p-6 sm:p-8 flex flex-col justify-between gap-5">
+          <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-2 text-xs text-[#57605B]">
               <span>COFFEE SMITR · LINE OA @coffeesmitr</span>
               <span aria-hidden="true">·</span>
@@ -589,7 +593,7 @@ export function SurveyView({
               <span aria-hidden="true">·</span>
               <span>ราคารวม VAT แล้ว</span>
             </div>
-            <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#161B18] leading-tight [text-wrap:balance]">
+            <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-[#161B18] leading-tight [text-wrap:balance]">
               {survey.title}
             </h1>
             <p className="text-sm sm:text-base text-[#57605B] leading-relaxed max-w-2xl">
@@ -624,11 +628,11 @@ export function SurveyView({
           </div>
         </div>
 
-        <div className="lg:col-span-5 min-h-[220px] lg:min-h-full bg-[#EEF1EE]">
+        <div className="lg:col-span-4 relative h-60 sm:h-64 lg:h-auto lg:min-h-[280px] bg-[#EEF1EE] overflow-hidden">
           <ResilientImage
             src={HERO_CULINARY_IMAGE}
             alt="ชุดอาหารและเครื่องดื่มสำหรับแบบสำรวจ COFFEE SMITR"
-            className="w-full h-full object-cover lg:h-full"
+            className="w-full h-full lg:absolute lg:inset-0 object-cover object-[50%_15%]"
           />
         </div>
       </section>

@@ -1,4 +1,4 @@
-export type FoodCategory = 'Panini & Bun' | 'Wrap' | 'Cake';
+export type FoodCategory = 'Panini & Bun' | 'Wrap';
 export type DrinkCategory = 'Coffee' | 'Tea & Non-Coffee' | 'Milk & Soda';
 
 export interface FoodMenuItem {
@@ -181,57 +181,6 @@ export const FOOD_MENU_ITEMS: FoodMenuItem[] = [
     price: 78,
     description: 'เมนูสำหรับสายหวานที่รักสุขภาพ แผ่นแป้งตอติญ่าห่อกล้วยหอม เนยอัลมอนด์ และโกโก้นิบส์',
     tags: ['สุขภาพ', 'มังสวิรัติ'],
-  },
-
-  // Cake
-  {
-    id: 'food-fudgy-brownie',
-    category: 'Cake',
-    nameEn: 'FUDGY BROWNIE',
-    nameTh: 'บราวนี่ ดาร์กช็อกโกแลต',
-    price: 68,
-    description: 'บราวนี่เนื้อนุ่มหนึบช็อกโกแลตเข้มข้นเอสเพรสโซ่ และโรยหน้าช็อกโกแลตชิป',
-  },
-  {
-    id: 'food-matcha-mochi-brownie',
-    category: 'Cake',
-    nameEn: 'MATCHA MOCHI BROWNIE',
-    nameTh: 'บราวนี่มัทฉะโมจิ',
-    price: 68,
-    description: 'บราวนี่มัทฉะ เนื้อนุ่มหนึบรสหอมกลมกล่อม และโรยหน้าไวท์ช็อกโกแลตชิป',
-  },
-  {
-    id: 'food-coffee-banana-crumble',
-    category: 'Cake',
-    nameEn: 'COFFEE BANANA CRUMBLE',
-    nameTh: 'เค้กกล้วยคอฟฟี่ ครัมเบิ้ล',
-    price: 65,
-    description: 'เค้กเนื้อนุ่มหอมกล้วย กลมกล่อมรสเข้มข้นกาแฟ และโรยหน้าด้วยครัมเบิ้ลหอมเนยกาแฟ',
-  },
-  {
-    id: 'food-strawberry-cheesecake-crumble',
-    category: 'Cake',
-    nameEn: 'STRAWBERRY CHEESECAKE CRUMBLE',
-    nameTh: 'สตอเบอรี่ชีสเค้กครัมเบิ้ล',
-    price: 70,
-    description: 'ชีสเค้กเนื้อนุ่มรสกลมกล่อม หอมหวานสตอเบอรี่ และโรยหน้าด้วยครัมเบิ้ลหอมเนย',
-  },
-  {
-    id: 'food-banana-tatin',
-    category: 'Cake',
-    nameEn: 'BANANA TATIN',
-    nameTh: 'เค้กกล้วยตาแตง',
-    price: 60,
-    description: 'เค้กกล้วยหอมคาราเมล เนื้อฉ่ำนุ่ม อัดแน่นด้วยเนื้อกล้วยหอมเน้นๆ หอมหวานรสละมุน',
-  },
-  {
-    id: 'food-nanas-no-worries',
-    category: 'Cake',
-    nameEn: 'NANA’S “NO-WORRIES”',
-    nameTh: 'บาร์โอ๊ตกล้วย นาน่า',
-    price: 65,
-    description: 'โอ๊ต กล้วย เนยอัลมอนด์ และความหวานจากน้ำผึ้ง (ปราศจากนมวัว ไข่ และกลูเตน)',
-    tags: ['Dairy-free', 'Egg-free', 'Gluten-free'],
   },
 ];
 

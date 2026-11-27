@@ -87,12 +87,12 @@ export function MenuCatalogView({ onApplyToSurvey }: MenuCatalogViewProps) {
         total: 140,
       },
       {
-        title: 'เซตเค้กกล้วยตาแตง + มัทฉะยูซุ',
-        tag: 'สายขนม & มัทฉะ',
-        food: FOOD_MENU_ITEMS.find((f) => f.id === 'food-banana-tatin')!,
+        title: 'เซตบันผักโขมอบชีส + มัทฉะยูซุ',
+        tag: 'สายมังสวิรัติ & มัทฉะ',
+        food: FOOD_MENU_ITEMS.find((f) => f.id === 'food-spinach-cheesy-bun')!,
         drink: DRINK_MENU_ITEMS.find((d) => d.id === 'drink-matcha-yuzu')!,
         temp: 'ICE',
-        total: 145,
+        total: 150,
       },
       {
         title: 'เซตพานีนีมันเผาอัลมอนด์ + มัทฉะแอปเปิล',
@@ -103,12 +103,12 @@ export function MenuCatalogView({ onApplyToSurvey }: MenuCatalogViewProps) {
         total: 150,
       },
       {
-        title: 'เซตบราวนี่ดาร์กช็อก + ยูซุโซดา',
-        tag: 'พักเบรกช่วงบ่าย',
-        food: FOOD_MENU_ITEMS.find((f) => f.id === 'food-fudgy-brownie')!,
+        title: 'เซตแร็ปไข่เบคอน + ยูซุโซดา',
+        tag: 'อิ่มพอดี + สดชื่น',
+        food: FOOD_MENU_ITEMS.find((f) => f.id === 'food-bacon-n-egg-wrap')!,
         drink: DRINK_MENU_ITEMS.find((d) => d.id === 'drink-yuzu-soda')!,
         temp: 'ICE',
-        total: 138,
+        total: 148,
       },
       {
         title: 'เซตแซลมอนครีมชีส + เอสเย็น',
@@ -119,12 +119,12 @@ export function MenuCatalogView({ onApplyToSurvey }: MenuCatalogViewProps) {
         total: 130,
       },
       {
-        title: 'เซตปราศจากนมวัว & กลูเตน',
-        tag: 'Dairy / Gluten Free',
-        food: FOOD_MENU_ITEMS.find((f) => f.id === 'food-nanas-no-worries')!,
+        title: 'เซตแร็ปกล้วยเนยอัลมอนด์ + โอ๊ตมิลค์ลาเต้',
+        tag: 'สุขภาพ / Lactose-Free',
+        food: FOOD_MENU_ITEMS.find((f) => f.id === 'food-banana-almond-butter-wrap')!,
         drink: DRINK_MENU_ITEMS.find((d) => d.id === 'drink-oat-milk-latte')!,
         temp: 'ICE',
-        total: 135,
+        total: 148,
       },
     ];
     return pairs.filter((p) => p.food && p.drink);
@@ -157,7 +157,7 @@ export function MenuCatalogView({ onApplyToSurvey }: MenuCatalogViewProps) {
           {[
             { id: 'combos', label: 'เซตจับคู่ ≤ 150฿' },
             { id: 'all', label: 'เมนูทั้งหมด' },
-            { id: 'food', label: 'เฉพาะอาหาร (24)' },
+            { id: 'food', label: 'เฉพาะอาหาร (18)' },
             { id: 'drink', label: 'เฉพาะเครื่องดื่ม (43)' },
           ].map((tab) => (
             <button
@@ -366,10 +366,10 @@ export function MenuCatalogView({ onApplyToSurvey }: MenuCatalogViewProps) {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <h3 className="text-lg font-semibold text-[#161B18] inline-flex items-center gap-2">
                   <Utensils className="w-4 h-4 text-[#1B5E3F]" />
-                  เมนูอาหาร — Panini &amp; Bun, Wrap, Cake ({filteredFoods.length})
+                  เมนูอาหาร — Panini &amp; Bun, Wrap ({filteredFoods.length})
                 </h3>
                 <div className="flex gap-1 p-1 bg-[#EAECEB] rounded-lg self-start">
-                  {(['ALL', 'Panini & Bun', 'Wrap', 'Cake'] as const).map((cat) => (
+                  {(['ALL', 'Panini & Bun', 'Wrap'] as const).map((cat) => (
                     <button
                       key={cat}
                       type="button"
