@@ -1,4 +1,5 @@
-import { DEFAULT_SURVEY } from '../data/defaultSurvey.ts';
+import { DRINK_ADDONS, DRINK_MENU_ITEMS, FOOD_MENU_ITEMS } from '../data/coffeeSmitrMenu.ts';
+import { DEFAULT_SURVEY, extractSpreadsheetId } from '../data/defaultSurvey.ts';
 import type {
   AnswerValue,
   MenuComboSelection,
@@ -333,4 +334,207 @@ export function exportResponsesCsvDirect(
   link.click();
   link.remove();
   URL.revokeObjectURL(url);
+}
+
+interface GvizCell {
+  v?: string | number | boolean | null;
+  f?: string;
+}
+
+interface GvizResponse {
+  status?: string;
+  table?: {
+    rows?: Array<{ c?: Array<GvizCell | null> }>;
+  };
+}
+
+function getCellString(row: Array<GvizCell | null>, idx: number): string {
+  const cell = row[idx];
+  if (!cell || cell.v === null || cell.v === undefined) return '';
+  if (typeof cell.v === 'string') return cell.v.trim();
+  return (cell.f ?? String(cell.v)).trim();
+}
+
+function getCellNumber(row: Array<GvizCell | null>, idx: number): number {
+  const cell = row[idx];
+  if (!cell || cell.v === null || cell.v === undefined) return 0;
+  if (typeof cell.v === 'number') return Number.isFinite(cell.v) ? cell.v : 0;
+  const parsed = Number(String(cell.v).replace(/[^\d.-]/g, ''));
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function parseSheetTimestamp(raw: string): string {
+  const trimmed = raw.trim();
+  if (!trimmed) return new Date().toISOString();
+
+  // Handle Google Visualization Date(y,m,d,h,min,s)
+  const gvizDate = /^Date\((\d+),(\d+),(\d+)(?:,(\d+),(\d+),(\d+))?\)$/.exec(trimmed);
+  if (gvizDate) {
+    const [, y, m, d, hh = '0', mm = '0', ss = '0'] = gvizDate;
+    return new Date(Number(y), Number(m), Number(d), Number(hh), Number(mm), Number(ss)).toISOString();
+  }
+
+  // Handle DD/MM/YYYY HH:mm:ss (including Thai Buddhist year >= 2400)
+  const dmy = /^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?$/.exec(trimmed);
+  if (dmy) {
+    const day = Number(dmy[1]);
+    const month = Number(dmy[2]) - 1;
+    let year = Number(dmy[3]);
+    if (year >= 2400) year -= 543;
+    const hh = Number(dmy[4] ?? 0);
+    const mm = Number(dmy[5] ?? 0);
+    const ss = Number(dmy[6] ?? 0);
+    const dt = new Date(year, month, day, hh, mm, ss);
+    if (!Number.isNaN(dt.getTime())) return dt.toISOString();
+  }
+
+  const parsed = new Date(trimmed);
+  return Number.isNaN(parsed.getTime()) ? new Date().toISOString() : parsed.toISOString();
+}
+
+async function queryGvizJson(sheetId: string, sheetName?: string): Promise<GvizResponse | null> {
+  const url = new URL(`https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq`);
+  url.searchParams.set('tqx', 'out:json');
+  if (sheetName) url.searchParams.set('sheet', sheetName);
+  url.searchParams.set('_', String(Date.now()));
+
+  const res = await fetch(url.toString(), { cache: 'no-store' });
+  if (!res.ok) return null;
+  const text = await res.text();
+  const start = text.indexOf('{');
+  const end = text.lastIndexOf('}');
+  if (start < 0 || end <= start) return null;
+  const parsed = JSON.parse(text.slice(start, end + 1)) as GvizResponse;
+  return parsed.status === 'ok' ? parsed : null;
+}
+
+export async function fetchResponsesFromGoogleSheet(
+  survey: SurveySchema
+): Promise<SurveyResponseRecord[] | null> {
+  const sheetId = extractSpreadsheetId(survey.googleSheetUrl || '');
+  if (!sheetId) return null;
+
+  try {
+    let gviz = await queryGvizJson(sheetId, 'รายการสั่งอาหารและเครื่องดื่ม');
+    if (!gviz) {
+      gviz = await queryGvizJson(sheetId);
+    }
+    if (!gviz?.table?.rows) return null;
+
+    const byPersonKey = new Map<string, SurveyResponseRecord>();
+
+    for (const rowObj of gviz.table.rows) {
+      const cells = rowObj.c ?? [];
+      const id = getCellString(cells, 0);
+      const rawDate = getCellString(cells, 1);
+      const respondentName = getCellString(cells, 2);
+      if (!respondentName || respondentName === 'ชื่อผู้รับสิทธิ์') continue;
+
+      const style = getCellString(cells, 3);
+      const foodLabel = getCellString(cells, 4);
+      const foodPrice = getCellNumber(cells, 5);
+      const drinkLabel = getCellString(cells, 6);
+      const drinkTempRaw = getCellString(cells, 7);
+      const addonsRaw = getCellString(cells, 8);
+      const drinkTotalPrice = getCellNumber(cells, 9);
+      const totalPrice = getCellNumber(cells, 10) || foodPrice + drinkTotalPrice;
+      const sweetness = getCellString(cells, 11);
+      const dietaryRaw = getCellString(cells, 12);
+      const notes = getCellString(cells, 13);
+
+      const matchedMember = survey.roster.find(
+        (m) => m.fullName.trim() === respondentName.trim()
+      );
+
+      const hasFood = Boolean(foodLabel && foodLabel !== '-');
+      const matchedFood = hasFood
+        ? FOOD_MENU_ITEMS.find(
+            (f) =>
+              `${f.nameEn} (${f.nameTh})` === foodLabel ||
+              foodLabel.includes(f.nameEn) ||
+              foodLabel.includes(f.nameTh)
+          )
+        : undefined;
+
+      const hasDrink = Boolean(drinkLabel && drinkLabel !== '-');
+      const matchedDrink = hasDrink
+        ? DRINK_MENU_ITEMS.find(
+            (d) =>
+              `${d.name} (${d.nameTh})` === drinkLabel ||
+              drinkLabel.includes(d.name) ||
+              drinkLabel.includes(d.nameTh)
+          )
+        : undefined;
+
+      const drinkAddons =
+        addonsRaw && addonsRaw !== '-'
+          ? addonsRaw
+              .split(',')
+              .map((s) => s.trim())
+              .filter((s) => Boolean(s) && s !== '-')
+          : [];
+      const drinkAddonsPrice = drinkAddons.reduce((sum, label) => {
+        const found = DRINK_ADDONS.find((a) => label.includes(a.label));
+        if (found) return sum + found.price;
+        const m = /\+(\d+)/.exec(label);
+        return sum + (m ? Number(m[1]) : 0);
+      }, 0);
+      const drinkBasePrice = Math.max(0, drinkTotalPrice - drinkAddonsPrice);
+      const drinkTemp: 'ICE' | 'HOT' | null = hasDrink
+        ? drinkTempRaw === 'HOT'
+          ? 'HOT'
+          : 'ICE'
+        : null;
+
+      const combo: MenuComboSelection = {
+        foodId: matchedFood?.id ?? (hasFood ? `sheet-food-${id || respondentName}` : null),
+        foodName: hasFood ? foodLabel : null,
+        foodPrice: hasFood ? foodPrice : 0,
+        drinkId: matchedDrink?.id ?? (hasDrink ? `sheet-drink-${id || respondentName}` : null),
+        drinkName: hasDrink ? drinkLabel : null,
+        drinkTemp,
+        drinkBasePrice: hasDrink ? drinkBasePrice : 0,
+        drinkAddons,
+        drinkAddonsPrice,
+        totalPrice,
+      };
+
+      const dietary =
+        dietaryRaw && dietaryRaw !== '-'
+          ? dietaryRaw
+              .split(',')
+              .map((s) => s.trim())
+              .filter((s) => Boolean(s) && s !== '-')
+          : [];
+
+      const answers: Record<string, AnswerValue> = {
+        q2_menu_combo: combo,
+      };
+      if (style) answers['q1_category'] = style;
+      if (sweetness && sweetness !== '-') answers['q3_sweetness'] = sweetness;
+      if (dietary.length > 0) answers['q5_dietary'] = dietary;
+      if (notes) answers['q7_notes'] = notes;
+
+      const submittedAt = parseSheetTimestamp(rawDate);
+      const record: SurveyResponseRecord = {
+        id: id || `SHEET-${matchedMember?.id ?? respondentName}`,
+        submittedAt,
+        respondentId: matchedMember?.id,
+        respondentName,
+        answers,
+        sheetSync: {
+          attempted: true,
+          synced: true,
+          message: 'ข้อมูลจาก Google Sheet',
+        },
+      };
+
+      const personKey = matchedMember?.id ?? respondentName.trim();
+      byPersonKey.set(personKey, record);
+    }
+
+    return saveLocalResponses(Array.from(byPersonKey.values()));
+  } catch {
+    return null;
+  }
 }

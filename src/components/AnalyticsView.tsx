@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Check, ClipboardCheck, Copy, Edit3, Plus, Sparkles, Users } from 'lucide-react';
+import { Check, ClipboardCheck, Copy, Edit3, Plus, RefreshCw, Sparkles, Users } from 'lucide-react';
 import type { MenuComboSelection, SurveyResponseRecord, SurveySchema } from '../types/survey.ts';
 import { ResponsesTableView } from './ResponsesTableView.tsx';
 
@@ -7,6 +7,8 @@ interface AnalyticsViewProps {
   survey: SurveySchema;
   responses: SurveyResponseRecord[];
   isAdmin: boolean;
+  syncingSheet?: boolean;
+  onRefreshFromSheet?: () => Promise<void>;
   onStartSurvey: () => void;
   onEditMemberSelection: (memberId: string) => void;
   onSeedSample: () => Promise<void>;
@@ -22,6 +24,8 @@ export function AnalyticsView({
   survey,
   responses,
   isAdmin,
+  syncingSheet = false,
+  onRefreshFromSheet,
   onStartSurvey,
   onEditMemberSelection,
   onSeedSample,
@@ -196,6 +200,17 @@ export function AnalyticsView({
               <Plus className="w-4 h-4" />
               <span>เริ่มเลือกเมนูในแบบสำรวจ</span>
             </button>
+            {onRefreshFromSheet && (
+              <button
+                type="button"
+                disabled={syncingSheet}
+                onClick={() => void onRefreshFromSheet()}
+                className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-[#161B18] bg-white border border-[#DCE2DD] rounded-lg hover:border-[#1B5E3F] disabled:opacity-60 transition-colors"
+              >
+                <RefreshCw className={`w-4 h-4 text-[#1B5E3F] ${syncingSheet ? 'animate-spin' : ''}`} />
+                <span>{syncingSheet ? 'กำลังดึงข้อมูลจาก Sheet...' : 'อัปเดตข้อมูลจาก Google Sheet'}</span>
+              </button>
+            )}
             {isAdmin && (
               <button
                 type="button"
@@ -282,6 +297,18 @@ export function AnalyticsView({
               รายการคำตอบ ({responses.length})
             </button>
           </div>
+
+          {onRefreshFromSheet && (
+            <button
+              type="button"
+              disabled={syncingSheet}
+              onClick={() => void onRefreshFromSheet()}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2.5 text-xs font-medium text-[#161B18] bg-white border border-[#DCE2DD] rounded-lg hover:border-[#1B5E3F] disabled:opacity-60 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 text-[#1B5E3F] ${syncingSheet ? 'animate-spin' : ''}`} />
+              <span>{syncingSheet ? 'กำลังซิงค์...' : 'อัปเดตจาก Google Sheet'}</span>
+            </button>
+          )}
 
           <button
             type="button"

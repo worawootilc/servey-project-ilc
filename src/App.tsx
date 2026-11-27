@@ -12,6 +12,7 @@ import {
 } from './services/adminAuth.ts';
 import {
   exportResponsesCsvDirect,
+  fetchResponsesFromGoogleSheet,
   loadLocalResponses,
   loadSurveySchema,
   resetSurveySchema,
@@ -32,9 +33,60 @@ export default function App() {
 
   const [survey, setSurvey] = useState<SurveySchema>(() => loadSurveySchema());
   const [responses, setResponses] = useState<SurveyResponseRecord[]>(() => loadLocalResponses());
+  const [syncingSheet, setSyncingSheet] = useState(false);
   const [preselectedMemberId, setPreselectedMemberId] = useState<string | null>(null);
   const [preselectedComboPatch, setPreselectedComboPatch] =
     useState<Partial<MenuComboSelection> | null>(null);
+
+  const syncFromSheet = useCallback(async () => {
+    setSyncingSheet(true);
+    try {
+      const sheetRows = await fetchResponsesFromGoogleSheet(survey);
+      if (sheetRows) {
+        setResponses((prev) => {
+          const now = Date.now();
+          const byKey = new Map<string, SurveyResponseRecord>();
+          for (const row of sheetRows) {
+            const key = row.respondentId || row.respondentName.trim();
+            const existing = prev.find(
+              (p) => (p.respondentId || p.respondentName.trim()) === key
+            );
+            const merged =
+              existing && existing.answers['q6_menu_satisfaction'] !== undefined
+                ? {
+                    ...row,
+                    answers: {
+                      ...row.answers,
+                      q6_menu_satisfaction: existing.answers['q6_menu_satisfaction'],
+                    },
+                  }
+                : row;
+            byKey.set(key, merged);
+          }
+          // Preserve freshly submitted local rows (< 20s old) in case Google Sheet query lags briefly
+          for (const localRow of prev) {
+            const ageMs = now - new Date(localRow.submittedAt).getTime();
+            const key = localRow.respondentId || localRow.respondentName.trim();
+            if (ageMs >= 0 && ageMs < 20000) {
+              const sheetRow = byKey.get(key);
+              if (!sheetRow || new Date(localRow.submittedAt).getTime() > new Date(sheetRow.submittedAt).getTime()) {
+                byKey.set(key, localRow);
+              }
+            }
+          }
+          return saveLocalResponses(Array.from(byKey.values()));
+        });
+      }
+    } finally {
+      setSyncingSheet(false);
+    }
+  }, [survey]);
+
+  useEffect(() => {
+    if (activeView === 'analytics' || activeView === 'survey') {
+      void syncFromSheet();
+    }
+  }, [activeView, syncFromSheet]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -234,6 +286,8 @@ export default function App() {
             survey={survey}
             responses={responses}
             isAdmin={isAdmin}
+            syncingSheet={syncingSheet}
+            onRefreshFromSheet={syncFromSheet}
             onStartSurvey={() => setActiveView('survey')}
             onEditMemberSelection={(memberId) => {
               setPreselectedMemberId(memberId);
