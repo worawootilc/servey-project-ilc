@@ -1,3 +1,22 @@
+import imgHamCheesePanini from '../assets/images/food/food-ham-cheese-panini.jpg';
+import imgTruffleHamCheesePanini from '../assets/images/food/food-truffle-ham-cheese-panini.jpg';
+import imgHamSpinachPanini from '../assets/images/food/food-ham-spinach-panini.jpg';
+import imgChickenEggSaladPanini from '../assets/images/food/food-chicken-egg-salad-panini.jpg';
+import imgHamburgPanini from '../assets/images/food/food-hamburg-panini.jpg';
+import imgMeltedMeTunaPanini from '../assets/images/food/food-melted-me-tuna-panini.jpg';
+import imgSalmonCreamcheesePanini from '../assets/images/food/food-salmon-creamcheese-panini.jpg';
+import imgSweetPotatoAlmond from '../assets/images/food/food-sweet-potato-almond.jpg';
+import imgMentaikoCreamCheese from '../assets/images/food/food-mentaiko-cream-cheese.jpg';
+import imgAlmondButterPanini from '../assets/images/food/food-almond-butter-panini.jpg';
+import imgSpinachCheesyBun from '../assets/images/food/food-spinach-cheesy-bun.jpg';
+import imgTruffleCheesyBun from '../assets/images/food/food-truffle-cheesy-bun.jpg';
+import imgCheesySpinachChickenWrap from '../assets/images/food/food-cheesy-spinach-chicken-wrap.jpg';
+import imgBaconNEggWrap from '../assets/images/food/food-bacon-n-egg-wrap.jpg';
+import imgCaesarChickenWrap from '../assets/images/food/food-caesar-chicken-wrap.jpg';
+import imgBeefNCheeseWrap from '../assets/images/food/food-beef-n-cheese-wrap.jpg';
+import imgBolonesePorkBallWrap from '../assets/images/food/food-bolonese-pork-ball-wrap.jpg';
+import imgBananaAlmondButterWrap from '../assets/images/food/food-banana-almond-butter-wrap.jpg';
+
 export type FoodCategory = 'Panini & Bun' | 'Wrap';
 export type DrinkCategory = 'Coffee' | 'Tea & Non-Coffee' | 'Milk & Soda';
 
@@ -8,6 +27,7 @@ export interface FoodMenuItem {
   nameTh: string;
   price: number;
   description: string;
+  imageUrl: string;
   tags?: string[];
 }
 
@@ -38,6 +58,7 @@ export const FOOD_MENU_ITEMS: FoodMenuItem[] = [
     nameTh: 'พานีนี แฮมชีส',
     price: 65,
     description: 'บันแป้งสาลีไม่ขัดสีหอมเนย ทามายองเนสคิวพี ไส้แฮมชีส เสิร์ฟหนีบร้อนจนชีสละลาย',
+    imageUrl: imgHamCheesePanini,
   },
   {
     id: 'food-truffle-ham-cheese-panini',
@@ -46,6 +67,7 @@ export const FOOD_MENU_ITEMS: FoodMenuItem[] = [
     nameTh: 'พานีนี ทรัฟเฟิล แฮมชีส',
     price: 70,
     description: 'อร่อยแบบพรีเมียม ด้วยทรัฟเฟิลมาโยหอมฟุ้ง เข้ากันได้ดีกับความเค็มมันของแฮมชีส',
+    imageUrl: imgTruffleHamCheesePanini,
   },
   {
     id: 'food-ham-spinach-panini',
@@ -54,6 +76,7 @@ export const FOOD_MENU_ITEMS: FoodMenuItem[] = [
     nameTh: 'พานีนี แฮม ผักโขมอบชีส',
     price: 75,
     description: 'หอมอร่อยรสกลมกล่อมแฮม และผักโขมอบชีส เสิร์ฟหนีบร้อนจนชีสเยิ้ม',
+    imageUrl: imgHamSpinachPanini,
   },
   {
     id: 'food-chicken-egg-salad-panini',
@@ -62,6 +85,7 @@ export const FOOD_MENU_ITEMS: FoodMenuItem[] = [
     nameTh: 'พานีนี อกไก่รมควัน สลัดไข่',
     price: 65,
     description: 'อกไก่รมควันเนื้อนุ่ม และความละมุนของสลัดไข่มาโยที่เข้ากันอย่างลงตัว เสิร์ฟหนีบร้อน',
+    imageUrl: imgChickenEggSaladPanini,
   },
   {
     id: 'food-hamburg-panini',
@@ -70,6 +94,7 @@ export const FOOD_MENU_ITEMS: FoodMenuItem[] = [
     nameTh: 'พานีนี แฮมเบิร์ก (เนื้อ+หมู)',
     price: 75,
     description: 'เนื้อแฮมเบิร์กสูตรคอฟฟี่สมิตร ทาวูสเตอร์ซอส หวานกลมกล่อมจากแยมหัวหอม และชีสเยิ้ม',
+    imageUrl: imgHamburgPanini,
   },
   {
     id: 'food-melted-me-tuna-panini',
@@ -78,6 +103,7 @@ export const FOOD_MENU_ITEMS: FoodMenuItem[] = [
     nameTh: 'พานีนี ทูน่าชีส',
     price: 65,
     description: 'บันแป้งสาลีไม่ขัดสีหอมเนย ไส้ทูน่าผสมมายองเนสคิวพีรสกลมกล่อม พร้อมชีสเยิ้ม',
+    imageUrl: imgMeltedMeTunaPanini,
   },
   {
     id: 'food-salmon-creamcheese-panini',
@@ -86,6 +112,7 @@ export const FOOD_MENU_ITEMS: FoodMenuItem[] = [
     nameTh: 'พานีนี แซลมอน ครีมชีส',
     price: 70,
     description: 'บันมันเผาเนื้อนุ่มหนึบ ไส้แซลมอนครีมชีส และต้นหอม เสิร์ฟหนีบร้อน',
+    imageUrl: imgSalmonCreamcheesePanini,
   },
   {
     id: 'food-sweet-potato-almond',
@@ -94,6 +121,7 @@ export const FOOD_MENU_ITEMS: FoodMenuItem[] = [
     nameTh: 'พานีนี มันเผา อัลมอนด์',
     price: 60,
     description: 'บันมันเผาเนื้อนุ่มหนึบ ไส้มันหวานญี่ปุ่นเนื้อเนียน และโรยอัลมอนด์สไลซ์ เสิร์ฟหนีบร้อนหอมมันเผา',
+    imageUrl: imgSweetPotatoAlmond,
     tags: ['มังสวิรัติ'],
   },
   {
@@ -103,6 +131,7 @@ export const FOOD_MENU_ITEMS: FoodMenuItem[] = [
     nameTh: 'พานีนี เมนไทโกะครีมชีส',
     price: 70,
     description: 'บันมันเผาเนื้อนุ่มหนึบ ผสานความเค็มมันอูมามิ จากไข่ปลาเมนไทโกะครีมชีส และต้นหอมซอย',
+    imageUrl: imgMentaikoCreamCheese,
   },
   {
     id: 'food-almond-butter-panini',
@@ -111,6 +140,7 @@ export const FOOD_MENU_ITEMS: FoodMenuItem[] = [
     nameTh: 'พานีนี เนยอัลมอนด์',
     price: 65,
     description: 'เมนูสำหรับสายหวานที่รักสุขภาพ ไส้เนยอัลมอนด์ 100% เคี้ยวกรุบเนื้ออัลมอนด์ เสิร์ฟหนีบร้อน',
+    imageUrl: imgAlmondButterPanini,
     tags: ['สุขภาพ', 'มังสวิรัติ'],
   },
   {
@@ -120,6 +150,7 @@ export const FOOD_MENU_ITEMS: FoodMenuItem[] = [
     nameTh: 'บันผักโขมอบชีส',
     price: 65,
     description: 'บันเนื้อนุ่ม มาพร้อมไส้ผักโขมอบชีสแน่นๆ อบสดใหม่หอมกรุ่น',
+    imageUrl: imgSpinachCheesyBun,
     tags: ['มังสวิรัติ'],
   },
   {
@@ -129,6 +160,7 @@ export const FOOD_MENU_ITEMS: FoodMenuItem[] = [
     nameTh: 'บันชีสทรัฟเฟิล',
     price: 65,
     description: 'บันเนื้อนุ่ม หอมฟุ้งซอสทรัฟเฟิลพรีเมียม พร้อมไส้เชดด้า มอสซาเรลล่า ชีสแน่นๆ หอมหวานมันเค็ม',
+    imageUrl: imgTruffleCheesyBun,
     tags: ['มังสวิรัติ'],
   },
 
@@ -140,6 +172,7 @@ export const FOOD_MENU_ITEMS: FoodMenuItem[] = [
     nameTh: 'แร็ป ผักโขมอบชีสไก่',
     price: 78,
     description: 'ผักโขมอบชีส ไก่ และไข่ต้ม อิ่มอร่อยในแผ่นแป้งตอติญ่า',
+    imageUrl: imgCheesySpinachChickenWrap,
   },
   {
     id: 'food-bacon-n-egg-wrap',
@@ -148,6 +181,7 @@ export const FOOD_MENU_ITEMS: FoodMenuItem[] = [
     nameTh: 'แร็ป ไข่เบคอน',
     price: 78,
     description: 'ไข่สแครมเบิ้ลเนื้อนุ่มหอมเนย เบคอน ชีส และซอสมะเขือเทศ รสกลมกล่อมในแผ่นแป้งตอติญ่า',
+    imageUrl: imgBaconNEggWrap,
   },
   {
     id: 'food-caesar-chicken-wrap',
@@ -156,6 +190,7 @@ export const FOOD_MENU_ITEMS: FoodMenuItem[] = [
     nameTh: 'แร็ปซีซาร์สลัดไก่',
     price: 88,
     description: 'แผ่นแป้งตอติญ่าโฮลวีทห่อซีซาร์สลัดผักคอส สันในไก่ เบคอนกรอบ และพาเมซานชีส',
+    imageUrl: imgCaesarChickenWrap,
   },
   {
     id: 'food-beef-n-cheese-wrap',
@@ -164,6 +199,7 @@ export const FOOD_MENU_ITEMS: FoodMenuItem[] = [
     nameTh: 'แร็ปเนื้อ และชีส',
     price: 88,
     description: 'เนื้อผัดหอมเครื่องเทศเบาๆ ผักคอส มะเขือเทศอบแห้ง ชีส และทาทาร์ซอส ในแผ่นแป้งตอติญ่าร้อนๆ',
+    imageUrl: imgBeefNCheeseWrap,
   },
   {
     id: 'food-bolonese-pork-ball',
@@ -172,6 +208,7 @@ export const FOOD_MENU_ITEMS: FoodMenuItem[] = [
     nameTh: 'แร็ปพอร์คบอลโบโลเนส',
     price: 88,
     description: 'พอร์คบอลโฮมเมด พร้อมซอสโบโลเนสเข้มข้น และชีส ในแผ่นแป้งตอติญ่าหนีบร้อน',
+    imageUrl: imgBolonesePorkBallWrap,
   },
   {
     id: 'food-banana-almond-butter-wrap',
@@ -180,6 +217,7 @@ export const FOOD_MENU_ITEMS: FoodMenuItem[] = [
     nameTh: 'แร็ปกล้วยเนยอัลมอนด์',
     price: 78,
     description: 'เมนูสำหรับสายหวานที่รักสุขภาพ แผ่นแป้งตอติญ่าห่อกล้วยหอม เนยอัลมอนด์ และโกโก้นิบส์',
+    imageUrl: imgBananaAlmondButterWrap,
     tags: ['สุขภาพ', 'มังสวิรัติ'],
   },
 ];

@@ -390,17 +390,25 @@ export function MenuCatalogView({ onApplyToSurvey }: MenuCatalogViewProps) {
                     key={item.id}
                     className="bg-white border border-[#E2E6E3] rounded-xl p-4 flex flex-col justify-between gap-3"
                   >
-                    <div>
-                      <div className="flex items-center justify-between gap-2 text-xs text-[#57605B]">
-                        <span>{item.category}</span>
-                        <span className="font-mono tabular-nums text-sm font-semibold text-[#161B18]">
-                          {item.price} บาท
-                        </span>
+                    <div className="flex items-start gap-3">
+                      <img
+                        src={item.imageUrl}
+                        alt={item.nameTh}
+                        loading="lazy"
+                        className="w-16 h-16 rounded-lg object-cover shrink-0 border border-[#E6EAE7] bg-[#F7F8F7]"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2 text-xs text-[#57605B]">
+                          <span>{item.category}</span>
+                          <span className="font-mono tabular-nums text-sm font-semibold text-[#161B18]">
+                            {item.price} บาท
+                          </span>
+                        </div>
+                        <h4 className="text-sm font-semibold text-[#161B18] mt-1">{item.nameTh}</h4>
+                        <div className="text-xs text-[#57605B] truncate">{item.nameEn}</div>
                       </div>
-                      <h4 className="text-sm font-semibold text-[#161B18] mt-1">{item.nameTh}</h4>
-                      <div className="text-xs text-[#57605B]">{item.nameEn}</div>
-                      <p className="text-xs text-[#57605B] mt-2 leading-relaxed">{item.description}</p>
                     </div>
+                    <p className="text-xs text-[#57605B] leading-relaxed">{item.description}</p>
                     <div className="flex items-center justify-between pt-2 border-t border-[#F0F2F0] text-xs">
                       <span className="text-[#57605B]">
                         เหลืองบเครื่องดื่ม{' '}

@@ -417,19 +417,27 @@ export function MenuComboPicker({ budgetLimit, value, onChange }: MenuComboPicke
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2 text-xs text-[#57605B]">
-                          <span>{item.category}</span>
-                          {item.tags && item.tags.length > 0 && (
-                            <>
-                              <span aria-hidden="true">·</span>
-                              <span>{item.tags.join(' / ')}</span>
-                            </>
-                          )}
+                      <div className="flex items-start gap-3 min-w-0">
+                        <img
+                          src={item.imageUrl}
+                          alt={item.nameTh}
+                          loading="lazy"
+                          className="w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-lg object-cover shrink-0 border border-[#E6EAE7] bg-[#F7F8F7]"
+                        />
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 text-xs text-[#57605B]">
+                            <span>{item.category}</span>
+                            {item.tags && item.tags.length > 0 && (
+                              <>
+                                <span aria-hidden="true">·</span>
+                                <span>{item.tags.join(' / ')}</span>
+                              </>
+                            )}
+                          </div>
+                          <div className="text-sm font-semibold text-[#161B18] mt-0.5">{item.nameTh}</div>
+                          <div className="text-xs text-[#57605B]">{item.nameEn}</div>
+                          <p className="text-xs text-[#57605B] mt-1 line-clamp-2">{item.description}</p>
                         </div>
-                        <div className="text-sm font-semibold text-[#161B18] mt-0.5">{item.nameTh}</div>
-                        <div className="text-xs text-[#57605B]">{item.nameEn}</div>
-                        <p className="text-xs text-[#57605B] mt-1 line-clamp-2">{item.description}</p>
                       </div>
                       <div className="text-right shrink-0">
                         <span className="font-mono tabular-nums text-sm font-semibold text-[#161B18]">
