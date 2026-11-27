@@ -10,6 +10,41 @@ import type {
 
 const SCHEMA_STORAGE_KEY = 'coffeesmitr_survey_schema_v4';
 const RESPONSES_STORAGE_KEY = 'coffeesmitr_survey_responses_v1';
+const RESPONDENT_EMAIL_STORAGE_KEY = 'coffeesmitr_respondent_email_v1';
+
+export function isValidSwuEmail(email: string): boolean {
+  return /^[a-zA-Z0-9._%+-]+@g\.swu\.ac\.th$/i.test(email.trim());
+}
+
+export function loadRespondentEmail(): string {
+  try {
+    const raw = localStorage.getItem(RESPONDENT_EMAIL_STORAGE_KEY) || '';
+    return isValidSwuEmail(raw) ? raw.trim().toLowerCase() : '';
+  } catch {
+    return '';
+  }
+}
+
+export function saveRespondentEmail(email: string): string {
+  const normalized = email.trim().toLowerCase();
+  try {
+    if (isValidSwuEmail(normalized)) {
+      localStorage.setItem(RESPONDENT_EMAIL_STORAGE_KEY, normalized);
+      return normalized;
+    }
+  } catch {
+    // ignore storage quota errors
+  }
+  return normalized;
+}
+
+export function clearRespondentEmail(): void {
+  try {
+    localStorage.removeItem(RESPONDENT_EMAIL_STORAGE_KEY);
+  } catch {
+    // ignore
+  }
+}
 
 function isMenuComboSelection(val: unknown): val is MenuComboSelection {
   return typeof val === 'object' && val !== null && 'totalPrice' in val;
@@ -116,6 +151,7 @@ export function buildAppsScriptRowPayload(record: SurveyResponseRecord) {
     id: record.id,
     submittedAt: record.submittedAt,
     respondentName: record.respondentName,
+    respondentEmail: record.respondentEmail || '',
     categoryStyle:
       typeof record.answers['q1_category'] === 'string' ? record.answers['q1_category'] : '',
     foodName: combo?.foodName || '-',
@@ -213,35 +249,45 @@ export async function submitSurveyResponseDirect(
   payload: {
     respondentId?: string;
     respondentName: string;
+    respondentEmail?: string;
     answers: Record<string, AnswerValue>;
   }
 ): Promise<{ record: SurveyResponseRecord; allResponses: SurveyResponseRecord[] }> {
-  const existingIndex = payload.respondentId
-    ? existingResponses.findIndex((r) => r.respondentId === payload.respondentId)
-    : existingResponses.findIndex((r) => r.respondentName === payload.respondentName);
+  const normalizedName = payload.respondentName.trim();
+  const normalizedEmail = payload.respondentEmail?.trim().toLowerCase() || undefined;
 
-  const nextList = [...existingResponses];
+  const isSamePerson = (r: SurveyResponseRecord): boolean => {
+    if (payload.respondentId && r.respondentId === payload.respondentId) return true;
+    if (r.respondentName.trim() === normalizedName) return true;
+    if (!payload.respondentId && !r.respondentId && normalizedEmail && r.respondentEmail?.toLowerCase() === normalizedEmail) {
+      return true;
+    }
+    return false;
+  };
+
+  const existingRecord = existingResponses.find(isSamePerson);
+  const filteredOthers = existingResponses.filter((r) => !isSamePerson(r));
+
   let savedRecord: SurveyResponseRecord;
-
-  if (existingIndex >= 0) {
+  if (existingRecord) {
     savedRecord = {
-      ...nextList[existingIndex],
+      ...existingRecord,
       submittedAt: new Date().toISOString(),
-      respondentId: payload.respondentId,
-      respondentName: payload.respondentName,
+      respondentId: payload.respondentId ?? existingRecord.respondentId,
+      respondentName: normalizedName,
+      respondentEmail: normalizedEmail ?? existingRecord.respondentEmail,
       answers: payload.answers,
     };
-    nextList[existingIndex] = savedRecord;
   } else {
     const nextSeq = 1001 + existingResponses.length;
     savedRecord = {
       id: `RSP-${nextSeq}-${Math.random().toString(36).slice(2, 5).toUpperCase()}`,
       submittedAt: new Date().toISOString(),
       respondentId: payload.respondentId,
-      respondentName: payload.respondentName,
+      respondentName: normalizedName,
+      respondentEmail: normalizedEmail,
       answers: payload.answers,
     };
-    nextList.unshift(savedRecord);
   }
 
   const sheetSync = await postToAppsScriptDirect(
@@ -253,12 +299,7 @@ export async function submitSurveyResponseDirect(
     sheetSync,
   };
 
-  const finalIndex = nextList.findIndex((r) => r.id === savedRecord.id);
-  if (finalIndex >= 0) {
-    nextList[finalIndex] = savedRecord;
-  }
-
-  const savedAll = saveLocalResponses(nextList);
+  const savedAll = saveLocalResponses([savedRecord, ...filteredOthers]);
   return { record: savedRecord, allResponses: savedAll };
 }
 
@@ -295,6 +336,7 @@ export function exportResponsesCsvDirect(
     'รหัสคำตอบ',
     'เวลาที่ส่ง',
     'ชื่อผู้เลือก',
+    'อีเมล (@g.swu.ac.th)',
     'อาหารที่เลือก',
     'เครื่องดื่มที่เลือก',
     'ยอดรวม (บาท)',
@@ -309,6 +351,7 @@ export function exportResponsesCsvDirect(
       r.id,
       new Date(r.submittedAt).toLocaleString('th-TH'),
       r.respondentName,
+      r.respondentEmail || '-',
       combo?.foodName || '-',
       combo?.drinkName
         ? `${combo.drinkName}${combo.drinkTemp ? ` (${combo.drinkTemp})` : ''}${
@@ -441,6 +484,7 @@ export async function fetchResponsesFromGoogleSheet(
       const sweetness = getCellString(cells, 11);
       const dietaryRaw = getCellString(cells, 12);
       const notes = getCellString(cells, 13);
+      const respondentEmailRaw = getCellString(cells, 14);
 
       const matchedMember = survey.roster.find(
         (m) => m.fullName.trim() === respondentName.trim()
@@ -521,6 +565,10 @@ export async function fetchResponsesFromGoogleSheet(
         submittedAt,
         respondentId: matchedMember?.id,
         respondentName,
+        respondentEmail:
+          respondentEmailRaw && isValidSwuEmail(respondentEmailRaw)
+            ? respondentEmailRaw.toLowerCase()
+            : undefined,
         answers,
         sheetSync: {
           attempted: true,
@@ -530,7 +578,13 @@ export async function fetchResponsesFromGoogleSheet(
       };
 
       const personKey = matchedMember?.id ?? respondentName.trim();
-      byPersonKey.set(personKey, record);
+      const existing = byPersonKey.get(personKey);
+      if (
+        !existing ||
+        new Date(record.submittedAt).getTime() >= new Date(existing.submittedAt).getTime()
+      ) {
+        byPersonKey.set(personKey, record);
+      }
     }
 
     return saveLocalResponses(Array.from(byPersonKey.values()));

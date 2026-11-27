@@ -11,12 +11,15 @@ import {
   verifyAndUnlockAdmin,
 } from './services/adminAuth.ts';
 import {
+  clearRespondentEmail,
   exportResponsesCsvDirect,
   fetchResponsesFromGoogleSheet,
   loadLocalResponses,
+  loadRespondentEmail,
   loadSurveySchema,
   resetSurveySchema,
   saveLocalResponses,
+  saveRespondentEmail,
   saveSurveySchema,
 } from './services/surveyStorage.ts';
 import type { MenuComboSelection, SurveyResponseRecord, SurveySchema } from './types/survey.ts';
@@ -33,6 +36,7 @@ export default function App() {
 
   const [survey, setSurvey] = useState<SurveySchema>(() => loadSurveySchema());
   const [responses, setResponses] = useState<SurveyResponseRecord[]>(() => loadLocalResponses());
+  const [respondentEmail, setRespondentEmail] = useState<string>(() => loadRespondentEmail());
   const [syncingSheet, setSyncingSheet] = useState(false);
   const [preselectedMemberId, setPreselectedMemberId] = useState<string | null>(null);
   const [preselectedComboPatch, setPreselectedComboPatch] =
@@ -51,16 +55,19 @@ export default function App() {
             const existing = prev.find(
               (p) => (p.respondentId || p.respondentName.trim()) === key
             );
-            const merged =
-              existing && existing.answers['q6_menu_satisfaction'] !== undefined
-                ? {
-                    ...row,
-                    answers: {
-                      ...row.answers,
-                      q6_menu_satisfaction: existing.answers['q6_menu_satisfaction'],
-                    },
-                  }
-                : row;
+            const merged: SurveyResponseRecord = existing
+              ? {
+                  ...row,
+                  respondentEmail: row.respondentEmail ?? existing.respondentEmail,
+                  answers:
+                    existing.answers['q6_menu_satisfaction'] !== undefined
+                      ? {
+                          ...row.answers,
+                          q6_menu_satisfaction: existing.answers['q6_menu_satisfaction'],
+                        }
+                      : row.answers,
+                }
+              : row;
             byKey.set(key, merged);
           }
           // Preserve freshly submitted local rows (< 20s old) in case Google Sheet query lags briefly
@@ -101,13 +108,24 @@ export default function App() {
 
   function handleSubmitted(record: SurveyResponseRecord) {
     setResponses((prev) => {
-      const idx = prev.findIndex((r) => r.id === record.id);
-      const next =
-        idx >= 0
-          ? prev.map((r, i) => (i === idx ? record : r))
-          : [record, ...prev];
-      return saveLocalResponses(next);
+      const normalizedName = record.respondentName.trim();
+      const filtered = prev.filter((r) => {
+        if (r.id === record.id) return false;
+        if (record.respondentId && r.respondentId === record.respondentId) return false;
+        if (r.respondentName.trim() === normalizedName) return false;
+        return true;
+      });
+      return saveLocalResponses([record, ...filtered]);
     });
+  }
+
+  function handleVerifyRespondentEmail(email: string) {
+    setRespondentEmail(saveRespondentEmail(email));
+  }
+
+  function handleClearRespondentEmail() {
+    clearRespondentEmail();
+    setRespondentEmail('');
   }
 
   async function handleSeedSample() {
@@ -263,6 +281,9 @@ export default function App() {
           <SurveyView
             survey={survey}
             responses={responses}
+            respondentEmail={respondentEmail}
+            onVerifyRespondentEmail={handleVerifyRespondentEmail}
+            onClearRespondentEmail={handleClearRespondentEmail}
             preselectedMemberId={preselectedMemberId}
             preselectedComboPatch={preselectedComboPatch}
             onConsumePreselect={handleConsumePreselect}

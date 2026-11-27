@@ -1,17 +1,18 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import {
   AlertCircle,
   ArrowLeft,
   ArrowRight,
   Check,
   CheckCircle2,
+  Mail,
   RotateCcw,
   Star,
   UserCheck,
   Users,
 } from 'lucide-react';
 import { formatComboSummary, HERO_CULINARY_IMAGE } from '../data/defaultSurvey.ts';
-import { submitSurveyResponseDirect } from '../services/surveyStorage.ts';
+import { isValidSwuEmail, submitSurveyResponseDirect } from '../services/surveyStorage.ts';
 import type {
   AnswerValue,
   MenuComboSelection,
@@ -26,6 +27,9 @@ import { ResilientImage } from './ResilientImage.tsx';
 interface SurveyViewProps {
   survey: SurveySchema;
   responses: SurveyResponseRecord[];
+  respondentEmail: string;
+  onVerifyRespondentEmail: (email: string) => void;
+  onClearRespondentEmail: () => void;
   preselectedMemberId: string | null;
   preselectedComboPatch: Partial<MenuComboSelection> | null;
   onConsumePreselect: () => void;
@@ -56,6 +60,9 @@ function isComboValue(val: unknown): val is MenuComboSelection {
 export function SurveyView({
   survey,
   responses,
+  respondentEmail,
+  onVerifyRespondentEmail,
+  onClearRespondentEmail,
   preselectedMemberId,
   preselectedComboPatch,
   onConsumePreselect,
@@ -63,6 +70,8 @@ export function SurveyView({
   onNavigateAnalytics,
   onNavigateMenu,
 }: SurveyViewProps) {
+  const [emailInput, setEmailInput] = useState(respondentEmail);
+  const [emailError, setEmailError] = useState<string | null>(null);
   const [stepIndex, setStepIndex] = useState(0);
   const [selectedMemberId, setSelectedMemberId] = useState<string>('');
   const [customName, setCustomName] = useState<string>('');
@@ -167,6 +176,27 @@ export function SurveyView({
     ? customName.trim()
     : selectedMember?.fullName ?? '';
 
+  const existingRespondentRecord = useMemo(() => {
+    if (!useCustomName && selectedMemberId) {
+      return responseByMemberId.get(selectedMemberId);
+    }
+    if (activeRespondentName) {
+      return responses.find((r) => r.respondentName.trim() === activeRespondentName);
+    }
+    return undefined;
+  }, [useCustomName, selectedMemberId, activeRespondentName, responseByMemberId, responses]);
+
+  function handleEmailGateSubmit(e: FormEvent) {
+    e.preventDefault();
+    const cleaned = emailInput.trim().toLowerCase();
+    if (!isValidSwuEmail(cleaned)) {
+      setEmailError('กรุณาใช้อีเมลที่ลงท้ายด้วย @g.swu.ac.th เท่านั้น (เช่น name@g.swu.ac.th)');
+      return;
+    }
+    setEmailError(null);
+    onVerifyRespondentEmail(cleaned);
+  }
+
   function handleSelectRosterMember(member: RosterMember) {
     setUseCustomName(false);
     setSelectedMemberId(member.id);
@@ -257,6 +287,7 @@ export function SurveyView({
       const { record } = await submitSurveyResponseDirect(survey, responses, {
         respondentId: useCustomName ? undefined : selectedMemberId || undefined,
         respondentName: activeRespondentName,
+        respondentEmail,
         answers,
       });
 
@@ -512,7 +543,12 @@ export function SurveyView({
             <p className="text-sm text-[#57605B]">
               ขอบคุณ{' '}
               <strong className="text-[#161B18]">{submittedReceipt.respondentName}</strong>{' '}
-              ระบบได้บันทึกรายการอาหารและเครื่องดื่มของท่านเข้าสู่รายการสั่งรวมแล้ว
+              {submittedReceipt.respondentEmail && (
+                <span className="font-mono text-xs text-[#57605B]">
+                  ({submittedReceipt.respondentEmail}){' '}
+                </span>
+              )}
+              ระบบได้บันทึกรายการอาหารและเครื่องดื่มของท่านเข้าสู่รายการสั่งรวมแล้ว (หากส่งซ้ำ ระบบได้อัปเดตแทนที่คำตอบเดิมเรียบร้อย)
             </p>
           </div>
         </div>
@@ -630,6 +666,87 @@ export function SurveyView({
         </div>
       </section>
 
+      {/* @g.swu.ac.th Email Gate */}
+      {!respondentEmail ? (
+        <section className="bg-white border border-[#E2E6E3] rounded-2xl p-6 sm:p-10">
+          <div className="max-w-lg mx-auto space-y-5">
+            <div className="flex items-start gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-[#1B5E3F]/10 text-[#1B5E3F] flex items-center justify-center shrink-0">
+                <Mail className="w-5 h-5" />
+              </div>
+              <div className="space-y-1">
+                <h2 className="font-serif text-xl sm:text-2xl font-semibold text-[#161B18]">
+                  ยืนยันอีเมลมหาวิทยาลัย (@g.swu.ac.th) เพื่อเข้าตอบแบบสำรวจ
+                </h2>
+                <p className="text-sm text-[#57605B] leading-relaxed">
+                  เปิดให้เข้าทำแบบสำรวจเฉพาะอีเมลที่ลงท้ายด้วย{' '}
+                  <strong className="font-mono text-[#161B18]">@g.swu.ac.th</strong>{' '}
+                  เท่านั้น หากเคยส่งคำตอบไว้แล้ว การส่งอีกครั้งจะไปแทนที่คำตอบเดิมให้อัตโนมัติ
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={handleEmailGateSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-[#57605B] mb-1.5">
+                  อีเมลมหาวิทยาลัย (@g.swu.ac.th) <span className="text-red-700">* จำเป็น</span>
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={emailInput}
+                  onChange={(e) => {
+                    setEmailInput(e.target.value);
+                    setEmailError(null);
+                  }}
+                  placeholder="example@g.swu.ac.th"
+                  className="w-full px-4 py-2.5 text-sm bg-[#F7F8F7] border border-[#DCE2DD] rounded-lg focus:outline-none focus:border-[#1B5E3F]"
+                />
+              </div>
+
+              {emailError && (
+                <div
+                  role="alert"
+                  className="flex items-start gap-2 p-3 rounded-lg bg-red-50 border border-red-200 text-xs text-red-800"
+                >
+                  <AlertCircle className="w-4 h-4 text-red-700 shrink-0 mt-0.5" />
+                  <span>{emailError}</span>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-medium text-white bg-[#1B5E3F] rounded-lg hover:bg-[#144730] transition-colors cursor-pointer"
+              >
+                <span>เข้าสู่แบบสำรวจ</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </form>
+          </div>
+        </section>
+      ) : (
+        <>
+      {/* Verified Email Session Strip */}
+      <div className="bg-white border border-[#E2E6E3] rounded-xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="inline-flex items-center gap-2 text-[#161B18]">
+          <Mail className="w-4 h-4 text-[#1B5E3F] shrink-0" />
+          <span>
+            เข้าใช้งานด้วยอีเมล:{' '}
+            <strong className="font-mono font-semibold text-[#1B5E3F]">{respondentEmail}</strong>
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            setEmailInput(respondentEmail);
+            onClearRespondentEmail();
+          }}
+          className="text-xs font-medium text-[#57605B] hover:text-[#161B18] underline cursor-pointer"
+        >
+          เปลี่ยนอีเมล
+        </button>
+      </div>
+
       {/* Stepper Bar */}
       <div className="bg-white border border-[#E2E6E3] rounded-xl p-3 sm:p-4">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -695,6 +812,15 @@ export function SurveyView({
             </div>
           )}
         </div>
+
+        {existingRespondentRecord && (
+          <div className="flex items-start gap-2.5 px-4 py-3 rounded-xl bg-[#EDF3EF] border border-[#CFE0D4] text-xs text-[#144730]">
+            <CheckCircle2 className="w-4 h-4 text-[#1B5E3F] shrink-0 mt-0.5" />
+            <span>
+              <strong>{existingRespondentRecord.respondentName}</strong> เคยส่งคำตอบไว้แล้ว — หากกดส่งแบบสำรวจอีกครั้ง ระบบจะนำไปบันทึกแทนที่คำตอบเดิมให้อัตโนมัติ
+            </span>
+          </div>
+        )}
 
         {/* Step 0 includes the 12-Person Roster Selector */}
         {stepIndex === 0 && (
@@ -881,11 +1007,19 @@ export function SurveyView({
               className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white bg-[#1B5E3F] rounded-lg hover:bg-[#144730] disabled:opacity-50 transition-colors whitespace-nowrap"
             >
               <Check className="w-4 h-4" />
-              <span>{submitting ? 'กำลังบันทึก...' : 'ส่งรายการเมนูที่เลือก'}</span>
+              <span>
+                {submitting
+                  ? 'กำลังบันทึก...'
+                  : existingRespondentRecord
+                    ? 'อัปเดตและแทนที่คำตอบเดิม'
+                    : 'ส่งรายการเมนูที่เลือก'}
+              </span>
             </button>
           )}
         </div>
       </section>
+        </>
+      )}
     </div>
   );
 }

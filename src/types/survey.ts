@@ -82,6 +82,7 @@ export interface SurveyResponseRecord {
   submittedAt: string;
   respondentId?: string;
   respondentName: string;
+  respondentEmail?: string;
   answers: Record<string, AnswerValue>;
   sheetSync?: SheetSyncResult;
 }

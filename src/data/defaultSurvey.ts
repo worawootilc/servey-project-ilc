@@ -171,7 +171,8 @@ const HEADERS = [
   'ยอดรวมสุทธิ (บาท)',
   'ระดับความหวาน',
   'ข้อจำกัดด้านอาหาร',
-  'หมายเหตุเพิ่มเติม'
+  'หมายเหตุเพิ่มเติม',
+  'อีเมลผู้ตอบ (@g.swu.ac.th)'
 ];
 
 function getOrCreateSheet() {
@@ -210,7 +211,8 @@ function buildRowFromPayload(data) {
     Number(data.totalPrice || 0),
     data.sweetness || '-',
     Array.isArray(data.dietary) ? data.dietary.join(', ') : (data.dietary || '-'),
-    data.notes || ''
+    data.notes || '',
+    data.respondentEmail || ''
   ];
 }
 

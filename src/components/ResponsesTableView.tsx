@@ -40,6 +40,7 @@ export function ResponsesTableView({
     if (!q) return responses;
     return responses.filter((r) => {
       if (r.respondentName.toLowerCase().includes(q)) return true;
+      if (r.respondentEmail?.toLowerCase().includes(q)) return true;
       if (r.id.toLowerCase().includes(q)) return true;
       const combo = isComboSelection(r.answers['q2_menu_combo']) ? r.answers['q2_menu_combo'] : null;
       if (combo?.foodName?.toLowerCase().includes(q)) return true;
@@ -159,7 +160,12 @@ export function ResponsesTableView({
                         {r.id}
                       </td>
                       <td className="py-2.5 px-4 font-medium text-[#161B18] whitespace-nowrap">
-                        {r.respondentName}
+                        <div>{r.respondentName}</div>
+                        {r.respondentEmail && (
+                          <div className="text-[11px] font-mono font-normal text-[#57605B]">
+                            {r.respondentEmail}
+                          </div>
+                        )}
                       </td>
                       <td className="py-2.5 px-4 text-xs text-[#161B18] max-w-[200px] truncate">
                         {combo?.foodName || '—'}
@@ -226,6 +232,11 @@ export function ResponsesTableView({
                 <h3 className="font-serif text-xl font-semibold text-[#161B18] mt-1">
                   {selectedRecord.respondentName}
                 </h3>
+                {selectedRecord.respondentEmail && (
+                  <div className="font-mono text-xs text-[#1B5E3F] mt-0.5">
+                    {selectedRecord.respondentEmail}
+                  </div>
+                )}
               </div>
               <button
                 type="button"
