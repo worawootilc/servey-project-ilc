@@ -609,13 +609,6 @@ export function SurveyView({
                   {responseByMemberId.size} / {survey.roster.length} ท่าน
                 </div>
               </div>
-              <div className="h-8 w-px bg-[#E2E6E3]" />
-              <div>
-                <div className="text-[#57605B]">เงื่อนไขการสั่งจอง</div>
-                <div className="text-sm font-medium text-[#161B18] mt-0.5">
-                  สั่งล่วงหน้า 2 วัน · ออกใบกำกับภาษีได้
-                </div>
-              </div>
             </div>
 
             <button
