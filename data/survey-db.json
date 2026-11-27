@@ -1,0 +1,213 @@
+{
+  "survey": {
+    "id": "coffeesmitr-150-survey",
+    "title": "แบบสำรวจเมนูอาหารและเครื่องดื่ม (งบไม่เกิน 150 บาท/ท่าน)",
+    "subtitle": "กรุณาเลือกรายชื่อของท่านและจับคู่เมนูอาหารกับเครื่องดื่มจากร้าน COFFEE SMITR ภายใต้งบประมาณไม่เกิน 150 บาท (ราคารวม VAT แล้ว) เพื่อรวบรวมสั่งจองล่วงหน้า 2 วันผ่าน LINE OA @coffeesmitr",
+    "budgetLimitBaht": 150,
+    "estimatedMinutes": 2,
+    "updatedAt": "2026-11-27T08:00:00.000Z",
+    "roster": [
+      {
+        "id": "member-01",
+        "order": 1,
+        "fullName": "รองศาสตราจารย์ ดร.ชนัตถ์ พูนเดช",
+        "role": "คณาจารย์ / บุคลากร"
+      },
+      {
+        "id": "member-02",
+        "order": 2,
+        "fullName": "ผู้ช่วยศาสตราจารย์ ดร.จิตสุภา กิติผดุง",
+        "role": "คณาจารย์ / บุคลากร"
+      },
+      {
+        "id": "member-03",
+        "order": 3,
+        "fullName": "อาจารย์ ดร.รณยุทธ เอื้อไตรรัตน์",
+        "role": "คณาจารย์ / บุคลากร"
+      },
+      {
+        "id": "member-04",
+        "order": 4,
+        "fullName": "อาจารย์ ดร.อรรคพล วณิกสัมบัน",
+        "role": "คณาจารย์ / บุคลากร"
+      },
+      {
+        "id": "member-05",
+        "order": 5,
+        "fullName": "ผู้ช่วยศาสตราจารย์ ดร.สุนทรี สกุลพราหมณ์",
+        "role": "คณาจารย์ / บุคลากร"
+      },
+      {
+        "id": "member-06",
+        "order": 6,
+        "fullName": "นางสาวประพาฬรัตน์ ยงมานิตชัย",
+        "role": "คณาจารย์ / บุคลากร"
+      },
+      {
+        "id": "member-07",
+        "order": 7,
+        "fullName": "นางสาวจาริณี มาเวหา",
+        "role": "คณาจารย์ / บุคลากร"
+      },
+      {
+        "id": "member-08",
+        "order": 8,
+        "fullName": "นางสาวเกษรา กิจจาชาญชัยกุล",
+        "role": "คณาจารย์ / บุคลากร"
+      },
+      {
+        "id": "member-09",
+        "order": 9,
+        "fullName": "นายเอกมงคล แก้วกล่ำ",
+        "role": "คณาจารย์ / บุคลากร"
+      },
+      {
+        "id": "member-10",
+        "order": 10,
+        "fullName": "นายวรวุฒิ สหะชัย",
+        "role": "คณาจารย์ / บุคลากร"
+      },
+      {
+        "id": "member-11",
+        "order": 11,
+        "fullName": "อาจารย์พรหมมินทร์ ประไพพงษ์ (วิทยากร)",
+        "role": "วิทยากร"
+      },
+      {
+        "id": "member-12",
+        "order": 12,
+        "fullName": "อาจารย์ ดร.พรรณธร ครุธเนตร (วิทยากร)",
+        "role": "วิทยากร"
+      }
+    ],
+    "sections": [
+      {
+        "id": "sec-style",
+        "numberLabel": "01",
+        "title": "รายชื่อผู้รับสิทธิ์และสไตล์เมนู",
+        "subtitle": "เลือกรายชื่อของท่านจากทั้งหมด 12 ท่าน และเลือกหมวดหมู่เมนูที่สนใจ"
+      },
+      {
+        "id": "sec-combo",
+        "numberLabel": "02",
+        "title": "จับคู่เมนูไม่เกิน 150 บาท",
+        "subtitle": "เลือกอาหาร 1 รายการ และเครื่องดื่ม 1 รายการ โดยระบบจะคำนวณงบไม่เกิน 150 บาทให้อัตโนมัติ"
+      },
+      {
+        "id": "sec-preferences",
+        "numberLabel": "03",
+        "title": "ความหวานและข้อจำกัดด้านอาหาร",
+        "subtitle": "ระบุระดับความหวานของเครื่องดื่ม ข้อจำกัดด้านอาหาร และหมายเหตุถึงร้าน"
+      }
+    ],
+    "questions": [
+      {
+        "id": "q1_category",
+        "sectionId": "sec-style",
+        "type": "image-choice",
+        "title": "สไตล์เมนูหลักที่ท่านต้องการรับประทาน",
+        "helperText": "เลือก 1 หมวดหมู่ที่ตรงกับความต้องการของท่าน",
+        "required": true,
+        "active": true,
+        "options": [
+          {
+            "id": "opt-panini",
+            "label": "Panini & Bun (60–75 บาท)",
+            "description": "พานีนีหนีบร้อนและบันอบสดใหม่ เหลืองบสำหรับเครื่องดื่มสูงสุด 90 บาท",
+            "imageUrl": "/src/assets/images/category_savory_food_1795771823921.jpg"
+          },
+          {
+            "id": "opt-beverage",
+            "label": "เน้นเครื่องดื่มคราฟต์ (50–90 บาท)",
+            "description": "กาแฟสเปเชียลตี้ มัทฉะอูจิ หรือโซดาผลไม้ คู่ขนมหรือบันเบาๆ",
+            "imageUrl": "/src/assets/images/category_craft_beverage_1795771824425.jpg"
+          },
+          {
+            "id": "opt-wrap-cake",
+            "label": "Wrap & Cake (60–88 บาท)",
+            "description": "แร็ปตอติญ่าอิ่มท้อง หรือบราวนี่และเค้กโฮมเมดคู่กาแฟ/ชา",
+            "imageUrl": "/src/assets/images/category_bakery_dessert_1795771825086.jpg"
+          }
+        ]
+      },
+      {
+        "id": "q2_menu_combo",
+        "sectionId": "sec-combo",
+        "type": "menu-combo",
+        "title": "เลือกจับคู่อาหารและเครื่องดื่ม COFFEE SMITR (ยอดรวมต้องไม่เกิน 150 บาท)",
+        "helperText": "เลือกอาหาร 1 เมนู และเครื่องดื่ม 1 เมนู (หรือเลือกเฉพาะอย่างใดอย่างหนึ่ง) ระบบจะกรองรายการที่อยู่ในงบคงเหลือให้อัตโนมัติ",
+        "required": true,
+        "active": true
+      },
+      {
+        "id": "q3_sweetness",
+        "sectionId": "sec-preferences",
+        "type": "single-choice",
+        "title": "ระดับความหวานของเครื่องดื่มที่ต้องการ",
+        "required": true,
+        "active": true,
+        "options": [
+          {
+            "id": "sweet-0",
+            "label": "ไม่หวานเลย (0%)"
+          },
+          {
+            "id": "sweet-25",
+            "label": "หวานน้อย (25%)"
+          },
+          {
+            "id": "sweet-50",
+            "label": "หวานปานกลาง (50%)"
+          },
+          {
+            "id": "sweet-100",
+            "label": "หวานปกติ (100%)"
+          }
+        ]
+      },
+      {
+        "id": "q5_dietary",
+        "sectionId": "sec-preferences",
+        "type": "multi-choice",
+        "title": "ข้อจำกัดด้านอาหารหรือความต้องการพิเศษ (ถ้ามี)",
+        "helperText": "สามารถเลือกได้มากกว่า 1 ข้อ หากไม่มีให้เลือก \"ไม่มีข้อจำกัดด้านอาหาร\"",
+        "required": false,
+        "active": true,
+        "options": [
+          {
+            "id": "diet-none",
+            "label": "ไม่มีข้อจำกัดด้านอาหาร"
+          },
+          {
+            "id": "diet-nobeef",
+            "label": "ไม่รับประทานเนื้อวัว"
+          },
+          {
+            "id": "diet-nopork",
+            "label": "ไม่รับประทานหมู"
+          },
+          {
+            "id": "diet-lactose",
+            "label": "แพ้นมวัว / ต้องการนมโอ๊ต"
+          },
+          {
+            "id": "diet-veg",
+            "label": "มังสวิรัติ (ไม่ทานเนื้อสัตว์)"
+          }
+        ]
+      },
+      {
+        "id": "q7_notes",
+        "sectionId": "sec-preferences",
+        "type": "long-text",
+        "title": "หมายเหตุเพิ่มเติม (เช่น ไม่ใส่ต้นหอม / แยกน้ำแข็ง / เมนูสำรอง)",
+        "placeholder": "ระบุรายละเอียดเพิ่มเติมหรือเมนูสำรองหากสินค้าหมด...",
+        "required": false,
+        "active": true
+      }
+    ],
+    "googleSheetUrl": "https://docs.google.com/spreadsheets/d/1PAXhY9wxyjh5aFrMLhtfPo_GZhRHK9Rl_iOxRryroVc/edit?usp=sharing",
+    "appsScriptUrl": "https://script.google.com/macros/s/AKfycbwdTLP2xGXNjHHNOYk6Z_WKzQfG9SzGz6rV-Ij0mnpSPWlbTTIQ4a5zIQDImez6JV5rvw/exec"
+  },
+  "responses": []
+}

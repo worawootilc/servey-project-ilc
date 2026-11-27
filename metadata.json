@@ -1,0 +1,6 @@
+{
+  "name": "ลิ้มรส — แบบสำรวจอาหารและเครื่องดื่ม",
+  "description": "แพลตฟอร์มแบบสำรวจพฤติกรรมและความพึงพอใจด้านอาหารและเครื่องดื่ม พร้อมระบบสรุปผลวิเคราะห์แบบเรียลไทม์และปรับแต่งคำถามได้",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
